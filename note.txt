@@ -1,0 +1,42 @@
+UPDATE tb_konstruksi SET stok_ig='0',stok_fg='0',stok_if='0',stok_ff='0',stok_bs='0',stok_bp='0',stok_bs2='0',stok_bp2='0',stok_crt='0';
+
+
+
+table baru a_nota
+table bari a_nota_bayar
+tambah field di surat_jalan
+
+
+ALTER TABLE `bs_finish_samatex` ADD `createstok` ENUM('no','yes') NOT NULL DEFAULT 'no' AFTER `lokasi_now`;
+
+
+'kode_roll'
+'konstruksi'
+'konstruksi_real'
+'ukuran_bs'
+'berat_bs'
+'tgl'
+'shift_op'
+'keterangan'
+'operator'
+'dep'
+'lokasi_now'
+'asalbs'
+
+folding rindang - ada konversinya
+0.9144
+
+bulat kan puluhan misal 100.93 harusnya 100.90
+
+
+P@j8FEo5xz
+u670640922_grand_stok_rjs
+u670640922_grandrjs
+
+
+
+
+
+
+
+--------- table tes_piutang, tes_piutang2 di cari cron job nya 
