@@ -1,12 +1,12 @@
 # 🧵 Sistem Monitoring & Manajemen Produksi Tekstil - PT. Rindang Jati
 
-![GitHub repo size](https://img.shields.io/github/repo-size/username/rjs-pusatex-weaving)
-![GitHub stars](https://img.shields.io/github/stars/username/rjs-pusatex-weaving)
-![GitHub forks](https://img.shields.io/github/forks/username/rjs-pusatex-weaving)
-![GitHub license](https://img.shields.io/github/license/username/rjs-pusatex-weaving)
-![Last Commit](https://img.shields.io/github/last-commit/username/rjs-pusatex-weaving)
+![GitHub repo size](https://img.shields.io/github/repo-size/adialfatih/rjs-pusatex-weaving)
+![GitHub stars](https://img.shields.io/github/stars/adialfatih/rjs-pusatex-weaving)
+![GitHub forks](https://img.shields.io/github/forks/adialfatih/rjs-pusatex-weaving)
+![GitHub license](https://img.shields.io/github/license/adialfatih/rjs-pusatex-weaving)
+![Last Commit](https://img.shields.io/github/last-commit/adialfatih/rjs-pusatex-weaving)
 
-> *Gantilah `username/repo-name` sesuai dengan nama GitHub kamu, Bos.*
+> *PT. Rindang Jati Spinning - PT. Putra Sahabat Textile*
 
 ---
 
