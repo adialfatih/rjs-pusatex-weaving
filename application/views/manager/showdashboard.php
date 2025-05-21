@@ -238,9 +238,25 @@
             </div>
             <?php } ?>
         </div>
+        <?php  if($namalogin=="Adi Subuhadir" OR $namalogin=="Hamid" OR $namalogin=="hamid"){ ?>
+        <!-- tampilkan stok bc jika adi dan hamid -->
+        <div class="card-awal blue">
+            <div class="items">Stok BC : </div>
+            <div class="items-nilai" id="stokbcAll">
+                0
+            </div>
+            <div class="items-dobel">
+                <div class="dobel green" id="stokbcRjs">
+                    RJS : 0
+                </div>
+                <div class="dobel red" id="stokbcPst">
+                    PST : 0
+                </div>
+            </div>
+            
+        </div>
         
-        
-        <?php  if($namalogin=="Adi Subuhadir"){ ?>
+        <?php } if($namalogin=="Adi Subuhadir"){ ?>
         <div class="card-awal blue">
             <div class="items">Presentase BS : </div>
             <div class="items-nilai">
@@ -521,6 +537,27 @@
                         }
             });
         }
+        function lihatStokbc(){
+            $.ajax({
+                    url:"<?=base_url();?>alldashboard/showbcstok",
+                    type: "POST",
+                    data: {"tes" : "tes"},
+                        cache: false,
+                        success: function(dataResult){
+                            var dataResult = JSON.parse(dataResult);
+                            if(dataResult.statusCode==200){
+                                $('#stokbcAll').html(''+dataResult.bcall+' ');
+                                $('#stokbcRjs').html('RJS : '+dataResult.bcrjs+' ');
+                                $('#stokbcPst').html('PST : '+dataResult.bcpst+' ');
+                            } else {
+                                $('#stokbcAll').html('Err');
+                                $('#stokbcRjs').html('Err');
+                                $('#stokbcPst').html('Err');
+                            }
+                        }
+            });
+        }
+        lihatStokbc();
         cek_agf();
         cek_piutang();
         $( "#agf_total" ).on( "click", function() { 

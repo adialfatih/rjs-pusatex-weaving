@@ -130,8 +130,13 @@
                                         $nosj = $dt_sj['no_sj'];
                                         $pkg = $this->data_model->get_byid('new_tb_packinglist', ['no_sj'=>$nosj]);
                                         foreach($pkg->result() as $noid => $pk):
+                                        if (substr($pk->kd, 0, 3) === 'PBC') {
+                                        ?>
+                                        <tr style="background:#edafaf;">
+                                        <?php
+                                        } else { echo "<tr>"; }
                                     ?>
-                                    <tr>
+                                    
                                         <td>
                                             <?=$pk->kd;?>
                                             <input type="hidden" name="kdpkg[]" value="<?=$pk->kd;?>">

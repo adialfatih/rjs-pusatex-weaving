@@ -1481,7 +1481,7 @@ class Alldashboard extends CI_Controller
                 </tr>
             </table>
         </div> 
-        <?php  if($userName == "adi" OR $userName == "hamid" OR $userName == "syafiq" OR $userName == "anding" OR $userName == "syafiq2"){ ?>
+        <?php  if($userName == "adi" OR $userName == "hamid" OR $userName == "syafiq" OR $userName == "anding2" OR $userName == "syafiq2"){ ?>
         <div class="tables" style="margin-top:20px;">
             <table border="1">
                 <tr>
@@ -1645,6 +1645,27 @@ class Alldashboard extends CI_Controller
             echo $jml." Roll Total Panjang : ".$_ukuranView."";
         }
         
+  }
+  function showbcstok(){
+        $bcRJs = $this->db->query("SELECT SUM(ukuran) AS ukr FROM ab_non_ori WHERE posisi='RJS' ")->row("ukr");
+        $bcPst = $this->db->query("SELECT SUM(ukuran) AS ukr FROM ab_non_ori WHERE posisi='Pusatex' ")->row("ukr");
+        $bcALL = floatval($bcRJs) + floatval($bcPst);
+        if(floor($bcRJs) == $bcRJs){
+            $bcRJs2 = number_format($bcRJs,0,'.',',');
+        } else {
+            $bcRJs2 = number_format($bcRJs,2,'.',',');
+        }
+        if(floor($bcPst) == $bcPst){
+            $bcPst2 = number_format($bcPst,0,'.',',');
+        } else {
+            $bcPst2 = number_format($bcPst,2,'.',',');
+        }
+        if(floor($bcALL) == $bcALL){
+            $bcALL2 = number_format($bcALL,0,'.',',');
+        } else {
+            $bcALL2 = number_format($bcALL,2,'.',',');
+        }
+        echo json_encode(array("statusCode"=>200, "bcrjs"=>$bcRJs2, "bcpst"=>$bcPst2, "bcall"=>$bcALL2));
   }
 
 }
