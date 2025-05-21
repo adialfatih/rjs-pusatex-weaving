@@ -1054,7 +1054,7 @@ class Alldashboard extends CI_Controller
   } //end
 
   function show_agf(){
-        $pst_to_grey = $this->db->query("SELECT SUM(ukuran) AS jml FROM data_igtujuan WHERE tujuan_proses='Grey'")->row("jml");
+        $pst_to_grey = $this->db->query("SELECT SUM(ukuran) AS jml FROM data_igtujuan WHERE ukuran>33 AND tujuan_proses='Grey'")->row("jml");
         $pst_to_finish = $this->db->query("SELECT SUM(ukuran) AS jml FROM data_igtujuan WHERE tujuan_proses='Finish'")->row("jml");
         $sudahDiFinish = $this->db->query("SELECT SUM(ukuran) AS jml FROM data_if_before WHERE status='ready'")->row("jml");
         $all_pusatex = $pst_to_grey + $pst_to_finish + $sudahDiFinish;
@@ -1141,12 +1141,13 @@ class Alldashboard extends CI_Controller
             } else {
                 foreach($alldata->result() as $kons2){
                     $_kons = $kons2->konstruksi;
-                    $jmlGrey = $this->db->query("SELECT SUM(ukuran) AS jml FROM data_igtujuan WHERE konstruksi='$_kons' AND tujuan_proses='Grey'")->row("jml");
+                    $jmlGrey = $this->db->query("SELECT SUM(ukuran) AS jml FROM data_igtujuan WHERE ukuran>33 AND konstruksi='$_kons' AND tujuan_proses='Grey'")->row("jml");
                     if($jmlGrey == floor($jmlGrey)){
                         $jmlGrey2 = number_format($jmlGrey,0,',','.');
                     } else {
                         $jmlGrey2 = number_format($jmlGrey,2,',','.');
                     }
+                    if($jmlGrey > 0){
                     ?>
                     <div class="card-awal blue">
                         <div class="items" style="color:#FFFFFF;border-bottom:1px solid #ccc;text-align:center;"><?=$_kons;?></div>
@@ -1159,7 +1160,7 @@ class Alldashboard extends CI_Controller
                         </div>
                         
                     </div>
-                    <?php }
+                    <?php } }
             }
             //} 
         }
@@ -1349,9 +1350,24 @@ class Alldashboard extends CI_Controller
         }
         foreach($dt2->result() as $val):
             $idcus = $val->id_konsumen;
+            $cekCusPriority = $this->data_model->get_byid('ab_cuspriority', ['idcus'=>$idcus]);
+            if($cekCusPriority->num_rows()==0){
+                $sj = $this->db->query("SELECT * FROM surat_jalan WHERE id_customer='$idcus' AND create_nota='y' ORDER BY id_sj DESC LIMIT 1")->row("no_sj");
+                $tgl_kirim = $this->db->query("SELECT * FROM surat_jalan WHERE id_customer='$idcus' AND create_nota='y'  ORDER BY id_sj DESC LIMIT 1")->row("tgl_kirim");
+            } else {
+                $inisial = $cekCusPriority->row("awalan");
+                $allid = array();
+                $qrs = $this->db->query("SELECT id_konsumen,nama_konsumen FROM dt_konsumen WHERE nama_konsumen LIKE '$inisial%'");
+                foreach($qrs->result() as $valw){
+                    $iniId = "'".$valw->id_konsumen."'";
+                    $allid[] = $iniId;
+                }
+                $imss = implode(',',$allid);
+                $sj = $this->db->query("SELECT * FROM surat_jalan WHERE id_customer IN ($imss) AND create_nota='y' ORDER BY id_sj DESC LIMIT 1")->row("no_sj");
+                $tgl_kirim = $this->db->query("SELECT * FROM surat_jalan WHERE id_customer IN ($imss) AND create_nota='y'  ORDER BY id_sj DESC LIMIT 1")->row("tgl_kirim");
+            }
             //cek nota terakhir
-            $sj = $this->db->query("SELECT * FROM surat_jalan WHERE id_customer='$idcus' AND create_nota='y' ORDER BY id_sj DESC LIMIT 1")->row("no_sj");
-            $tgl_kirim = $this->db->query("SELECT * FROM surat_jalan WHERE id_customer='$idcus' AND create_nota='y'  ORDER BY id_sj DESC LIMIT 1")->row("tgl_kirim");
+            
             $jmlnota = $this->db->query("SELECT SUM(total_harga) AS ttl FROM a_nota WHERE no_sj='$sj'")->row("ttl");
             if(fmod($jmlnota, 1) !== 0.00){
                 $jmlnota2 = number_format($jmlnota,2,',','.');
@@ -1551,9 +1567,9 @@ class Alldashboard extends CI_Controller
             $cek_BP = $this->db->query("SELECT * FROM data_igtujuan WHERE konstruksi='$kons' AND ( ukuran>20 AND ukuran<50 ) AND tujuan_proses='Finish'");
             $cek_BC = $this->db->query("SELECT * FROM data_igtujuan WHERE konstruksi='$kons' AND ( ukuran>3 AND ukuran<21 ) AND tujuan_proses='Finish'");
         } else { 
-            $cek_ori = $this->db->query("SELECT * FROM data_igtujuan WHERE konstruksi='$kons' AND ukuran>49 AND tujuan_proses='Grey'");
-            $cek_BP = $this->db->query("SELECT * FROM data_igtujuan WHERE konstruksi='$kons' AND ( ukuran>20 AND ukuran<50 ) AND tujuan_proses='Grey'");
-            $cek_BC = $this->db->query("SELECT * FROM data_igtujuan WHERE konstruksi='$kons' AND ( ukuran>3 AND ukuran<21 ) AND tujuan_proses='Grey'");
+            $cek_ori = $this->db->query("SELECT * FROM data_igtujuan WHERE konstruksi='$kons' AND ukuran>33 AND tujuan_proses='Grey'");
+            //$cek_BP = $this->db->query("SELECT * FROM data_igtujuan WHERE konstruksi='$kons' AND ( ukuran>20 AND ukuran<34 ) AND tujuan_proses='Grey'");
+            //$cek_BC = $this->db->query("SELECT * FROM data_igtujuan WHERE konstruksi='$kons' AND ( ukuran>3 AND ukuran<21 ) AND tujuan_proses='Grey'");
             //echo "num2";
         }
         
@@ -1604,96 +1620,7 @@ class Alldashboard extends CI_Controller
         } else {
             echo "Tidak ada data ORI.!!";
         }
-        if($cek_BP->num_rows() > 0){
-            echo "<div class='tables' style='margin-top:30px;'>";
-            echo "<table style='font-size:12px;'>";
-            echo "<tr>";
-            echo "<th>No</th>";
-            echo "<th>Konstruksi</th>";
-            echo "<th>Kode Roll</th>";
-            echo "<th>Panjang</th>";
-            echo "<th>Status</th>";
-            echo "</tr>";
-            echo "<tr><td colspan='5' style='text-align:left;font-weight:bold;'>DATA BP</td></tr>";
-            $no=1; $total_bp=0;
-            foreach($cek_BP->result() as $val){
-                $_kdrol = $val->kode_roll;
-                $wasFold = $this->data_model->get_byid('data_fol',['kode_roll'=>$_kdrol])->num_rows();
-                if($wasFold > 0){
-                    $status = "Folding";
-                } else {
-                    $wasIF = $this->data_model->get_byid('data_if',['kode_roll'=>$_kdrol])->num_rows();
-                    if($wasIF > 0){
-                        $status = "InsFinish";
-                    } else {
-                        $status = "Pusatex";
-                    }
-                }
-                echo "<tr>";
-                echo "<td>".$no++."</td>";
-                echo "<td>".$val->konstruksi."</td>";
-                echo "<td>".$val->kode_roll."</td>";
-                echo "<td>".$val->ukuran."</td>";
-                if($status == "Pusatex"){
-                    echo "<td>$status</td>";
-                } else {
-                    echo "<td style='color:red;'>$status</td>";
-                }
-                echo "</tr>";
-                $total_bp += $val->ukuran;
-            }
-            $total_bp = number_format($total_bp,0,',','.');
-            echo "<tr><td colspan='3' style='text-align:left;font-weight:bold;'>Total Panjang BP</td><td>".$total_bp."</td><td></td></tr>";
-            echo "</table></div>";
-            
-        } else {
-            
-        }
-        if($cek_BC->num_rows() > 0){
-            echo "<div class='tables' style='margin-top:30px;'>";
-            echo "<table style='font-size:12px;'>";
-            echo "<tr>";
-            echo "<th>No</th>";
-            echo "<th>Konstruksi</th>";
-            echo "<th>Kode Roll</th>";
-            echo "<th>Panjang</th>";
-            echo "<th>Status</th>";
-            echo "</tr>";
-            echo "<tr><td colspan='5' style='text-align:left;font-weight:bold;'>DATA BC</td></tr>";
-            $no=1; $total_bc=0;
-            foreach($cek_BC->result() as $val){
-                $_kdrol = $val->kode_roll;
-                $wasFold = $this->data_model->get_byid('data_fol',['kode_roll'=>$_kdrol])->num_rows();
-                if($wasFold > 0){
-                    $status = "Folding";
-                } else {
-                    $wasIF = $this->data_model->get_byid('data_if',['kode_roll'=>$_kdrol])->num_rows();
-                    if($wasIF > 0){
-                        $status = "InsFinish";
-                    } else {
-                        $status = "Pusatex";
-                    }
-                }
-                echo "<tr>";
-                echo "<td>".$no++."</td>";
-                echo "<td>".$val->konstruksi."</td>";
-                echo "<td>".$val->kode_roll."</td>";
-                echo "<td>".$val->ukuran."</td>";
-                if($status == "Pusatex"){
-                    echo "<td>$status</td>";
-                } else {
-                    echo "<td style='color:red;'>$status</td>";
-                }
-                echo "</tr>";
-                $total_bc += $val->ukuran;
-            }
-            $total_bc = number_format($total_bc,0,',','.');
-            echo "<tr><td colspan='3' style='text-align:left;font-weight:bold;'>Total Panjang BC</td><td>".$total_bc."</td><td></td></tr>";
-            echo "</table></div>";
-            
-        } else {
-            
-        }
+        
         ?><div style="width:100%;margin-top:20px;background:#ccc;padding:10px;display:flex;justify-content:center;align-items:center;" onclick="closeModal()">Close</div><?php
   } //end
   function hitungPaket(){

@@ -213,9 +213,16 @@ div.tables {
     </style>
 </head>
 <body>
-    <?php $ur = $this->uri->segment(2); ?>
+
+    <?php $ur = strtolower($this->uri->segment(2)); 
+    if($ur == "finish"){
+        $ur2 = "Finish";
+    } else {
+        $ur2 = "Grey";
+    }
+    ?>
     <div class="topbar">
-       Stok Kain di Pusatex <?=ucfirst($ur);?>
+       Stok Kain di Pusatex <?=$ur2;?>
     </div>
     
     <div class="konten-mobile2">
@@ -243,7 +250,7 @@ div.tables {
     </div>
     <div class="konten-mobile2">
         <div class="kotaknewpkg">
-            <span>Stok <?=ucfirst($ur);?> di Pusatex</span>
+            <span>Stok <?=$ur2;?> di Pusatex</span>
             <div style="width: 100%;display: flex;flex-direction: column;">
                 <div class="konten-mobile2" style="margin-top:20px;" id="kontenStok">
                     Loading...
@@ -280,7 +287,7 @@ div.tables {
             $.ajax({
                 url:"<?=base_url();?>alldashboard/loaddatastokonpusatex",
                 type: "POST",
-                data: {"jns" : "jns", "tipe": "<?=ucfirst($ur);?>"},
+                data: {"jns" : "jns", "tipe": "<?=$ur2;?>"},
                 cache: false,
                 success: function(dataResult){
                     $('#kontenStok').html(dataResult);
